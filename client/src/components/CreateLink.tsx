@@ -1,6 +1,7 @@
 import { ChangeEvent, FormEvent, useState } from "react";
 import { gql, useMutation } from "@apollo/client";
 import { Button, Container, Flex, Input } from "@chakra-ui/react";
+import { useNavigate } from "react-router-dom";
 
 interface FormState {
   description: string;
@@ -19,6 +20,7 @@ const CREATE_LINK_MUTATION = gql`
 `;
 
 function CreateLink() {
+  const navigate = useNavigate();
   const [formState, setFormState] = useState<FormState>({
     description: "",
     url: "",
@@ -34,7 +36,8 @@ function CreateLink() {
     variables: {
       description: formState.description,
       url: formState.url
-    }
+    },
+    onCompleted: () => navigate("/")
   });
 
   console.log(formState);
