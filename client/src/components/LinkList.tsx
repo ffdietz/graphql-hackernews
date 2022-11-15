@@ -1,6 +1,6 @@
 import { Container } from '@chakra-ui/react';
 import Link from './Link';
-import { useQuery, gql } from '@apollo/client'
+import { useQuery, gql, QueryResult } from '@apollo/client'
 
 interface LinkProps {
 
@@ -21,7 +21,7 @@ const FEED_QUERY = gql`
 `;
 
 function LinkList() {
-  const  { data, loading }  = useQuery(FEED_QUERY);
+  const { data, loading } = useQuery(FEED_QUERY);
   const linksToRender = data?.feed.links;
 
   return (
@@ -37,4 +37,4 @@ function LinkList() {
 export default LinkList
 
 
-// Add types to useQuery?
+// Add types to useQuery? <QueryResult> fields requested?

@@ -11,11 +11,19 @@ function Header() {
       alignItems="center"
     >
       <Link to="/">
-        <Text borderRight="2px" p="0 20px" fontWeight="extrabold" fontSize="4xl">Hacker News</Text>
+        <Text
+          borderRight="2px"
+          p="0 20px"
+          fontWeight="extrabold"
+          fontSize="4xl"
+        >
+          Hacker News
+        </Text>
       </Link>
-      <Flex justifyContent="space-between" w="10vw" marginLeft="3rem">
-        <Link to="/" >new</Link>
+      <Flex justifyContent="space-between" w="15vw" marginLeft="3rem">
+        <Link to="/">new</Link>
         <Link to="/create">submit</Link>
+        <Link to="/login">login</Link>
       </Flex>
     </Flex>
   );
