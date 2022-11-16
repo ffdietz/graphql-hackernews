@@ -1,19 +1,63 @@
-import { Button, Container, Flex, Input, Spacer, Text, VStack } from '@chakra-ui/react';
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { gql, useMutation } from '@apollo/client';
+import { Button, HStack, Input, Text, VStack } from '@chakra-ui/react';
+import { AUTH_TOKEN } from '../helpers/constants';
+
+const SIGNUP_MUTATION = gql`
+  mutation SignupMutation($email: String!, $password: String!, $name: String!) {
+    signup(email: $email, password: $password, name: $name) {
+      token
+    }
+  }
+`;
+
+const LOGIN_MUTATION = gql`
+  mutation LoginMutation($email: String!, $password: String!) {
+    login(email: $email, password: $password) {
+      token
+    }
+  }
+`;
+
 
 function Login() {
-  const navigate = useNavigate;
-  const [ formState, setFormState] = useState({
+  const navigate = useNavigate();
+  const [formState, setFormState] = useState({
     login: true,
     email:'',
     password:'',
     name:''
   });
 
+  const [login] = useMutation(LOGIN_MUTATION, {
+    variables: {
+      email: formState.email,
+      password: formState.password,
+    },
+    onCompleted: ({ login }) => {
+      localStorage.setItem(AUTH_TOKEN, login.token);
+      navigate('/');
+    },
+  });
+
+  const [signup] = useMutation(SIGNUP_MUTATION, {
+    variables: {
+      name: formState.name,
+      email: formState.email,
+      password: formState.password,
+    },
+    onCompleted: ({ signup }) => {
+      localStorage.setItem(AUTH_TOKEN, signup.token);
+      navigate('/');
+    },
+  });
+
   return (
     <VStack h="60vh" w="50vw" justifyContent="space-between">
-      <Text fontWeight="bold" fontSize="xx-large">{formState.login ? "Login" : "Sign Up"}</Text>
+      <Text fontWeight="bold" fontSize="xx-large">
+        {formState.login ? "Login" : "Sign Up"}
+      </Text>
       <VStack spacing="1rem" w="full">
         {!formState.login && (
           <Input
@@ -51,8 +95,8 @@ function Login() {
           placeholder="Choose a safety password"
         />
       </VStack>
-      <VStack bottom="0px">
-        <Button onClick={() => console.log("onClick")}>
+      <HStack>
+        <Button onClick={() => formState.login ? login() : signup()}>
           {formState.login ? "login" : "create account"}
         </Button>
         <Button
@@ -63,13 +107,16 @@ function Login() {
             })
           }
         >
-          {formState.login
-            ? "need to create an account"
-            : "already have an account?"}
+          {formState.login ?
+            "need to create an account"
+            :
+            "already have an account?"}
         </Button>
-      </VStack>
+      </HStack>
     </VStack>
   );
 }
 
 export default Login
+
+// how to query the user list

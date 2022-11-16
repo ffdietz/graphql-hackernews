@@ -11,8 +11,8 @@ export const App = () => (
     <Container marginTop="20vh">
       <Routes>
         <Route path="/" element={<LinkList />} />
-        <Route path="/create" element={<CreateLink />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/create" element={<CreateLink />} />
       </Routes>
     </Container>
   </Container>

@@ -15,16 +15,14 @@ function Header() {
       fontSize="x-large"
     >
       <Link to="/">
-        <Heading borderRight="2px" p="0 20px">Hacker News</Heading>
+        <Heading borderRight="2px" p="0 20px" fontWeight="extrabold">Hacker News</Heading>
       </Link>
-      <Flex justifyContent="space-between" w="15vw" marginLeft="3rem">
+      <Flex justifyContent="space-between" w={authToken ? "25vw" : "15vw"} marginLeft="3rem">
         <Link to="/">new</Link>
         <Link to="/search">search</Link>
-        {authToken && (
-          <Link to="/create">submit</Link>
-        )}
+        { authToken && <Link to="/create">submit</Link> }
       </Flex>
-      <Flex w="full" justifyContent="flex-end" paddingRight="2rem">
+      <Flex w="full" justifyContent="flex-end" paddingRight="4vw">
         {authToken?(
           <Box
             onClick={() => {
