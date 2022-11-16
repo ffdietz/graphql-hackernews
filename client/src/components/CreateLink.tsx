@@ -1,6 +1,6 @@
 import { ChangeEvent, FormEvent, useState } from "react";
 import { gql, useMutation } from "@apollo/client";
-import { Button, Container, Flex, Input } from "@chakra-ui/react";
+import { Button, Container, Flex, Input, VStack } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 
 interface FormState {
@@ -27,7 +27,8 @@ function CreateLink() {
   });
 
   /* 
-  When we use the useMutation hook, we need to destructure out a function that can be used to call the mutation. 
+  When we use the useMutation hook, we need to destructure out a function that 
+  can be used to call the mutation. 
   That’s what createLink is in the code block above. 
   We’re now free to call the function whenever we need to when the component renders.
   */
@@ -50,7 +51,7 @@ function CreateLink() {
           createLink();
         }}
       >
-        <Flex>
+        <VStack>
           <Input
             value={formState.description}
             onChange={(e: ChangeEvent<HTMLInputElement>) =>
@@ -74,7 +75,7 @@ function CreateLink() {
             placeholder="The URL for the link"
           />
           <Button type="submit">Submit</Button>
-        </Flex>
+        </VStack>
       </form>
     </Container>
   );

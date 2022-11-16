@@ -27,8 +27,8 @@ function LinkList() {
   return (
     <Container>
       {!loading && 
-      linksToRender.map((link: any) => (
-        <Link key={link.id} link={link}/>
+      linksToRender.map((link: any, index: number) => (
+        <Link key={link.id} link={link} index={index}/>
       ))}
     </Container>
   )
