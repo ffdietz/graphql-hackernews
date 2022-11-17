@@ -144,37 +144,35 @@ function LinkList() {
     <Container>
       {loading && <Text>Loading...</Text>}
       {error && <pre>Something is wrong...</pre>}
-      {data &&(
+      {data && (
         <>
-        { getLinksToRender(isNewPage, data).map(
-          (link: LinkT, index: number) => (
-            <Link key={link.id} link={link} index={index + pageIndex} 
-          />
-        ))}
-        { isNewPage && (
-          <Flex>
-            <Box
-              mr="1rem"
-              cursor="pointer"
-              onClick={() => {
-                if(page > 1) 
-                  navigate(`/new/${page - 1}`)
-              }}
-            >
-              Previous
-            </Box>
-            <Box
-              cursor="pointer"
-              onClick={() => {
-                if(page <= data.feed.count / LINKS_PER_PAGE) 
-                  navigate(`/new/${page + 1}`)
-              }}
-            >
-              Next
-            </Box>
-
-          </Flex>
-        )}
+          {getLinksToRender(isNewPage, data).map(
+            (link: LinkT, index: number) => (
+              <Link key={link.id} link={link} index={index + pageIndex} />
+            )
+          )}
+          {isNewPage && (
+            <Flex>
+              <Box
+                mr="1rem"
+                cursor="pointer"
+                onClick={() => {
+                  if (page > 1) navigate(`/new/${page - 1}`);
+                }}
+              >
+                Previous
+              </Box>
+              <Box
+                cursor="pointer"
+                onClick={() => {
+                  if (page <= data.feed.count / LINKS_PER_PAGE)
+                    navigate(`/new/${page + 1}`);
+                }}
+              >
+                Next
+              </Box>
+            </Flex>
+          )}
         </>
       )}
     </Container>

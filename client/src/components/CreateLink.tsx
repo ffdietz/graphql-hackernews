@@ -3,6 +3,7 @@ import { gql, useMutation } from "@apollo/client";
 import { Button, Container, Flex, Input, VStack } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { FeedQuery, FEED_QUERY } from "./LinkList";
+import { LINKS_PER_PAGE } from "../helpers/constants";
 
 const CREATE_LINK_MUTATION = gql`
   mutation PostMutation($description: String!, $url: String!) {
@@ -42,8 +43,17 @@ function CreateLink() {
         url: formState.url,
       },
       update: (cache, { data: { post } }) => {
+        const take = LINKS_PER_PAGE;
+        const skip = 0;
+        const orderBy = { createdAt: "desc" };
+
         const data: any = cache.readQuery({
           query: FEED_QUERY,
+          variables: {
+            take,
+            skip,
+            orderBy,
+          },
         });
 
         cache.writeQuery({
@@ -52,6 +62,11 @@ function CreateLink() {
             feed: {
               links: [post, ...data.feed.links],
             },
+          },
+          variables: {
+            take,
+            skip,
+            orderBy,
           },
         });
       },

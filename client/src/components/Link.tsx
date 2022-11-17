@@ -1,5 +1,5 @@
 import { Flex, Container, Box, Text, HStack, VStack } from '@chakra-ui/react';
-import { AUTH_TOKEN } from '../helpers/constants';
+import { AUTH_TOKEN, LINKS_PER_PAGE } from '../helpers/constants';
 import { timeDifferenceForDate } from '../utils/timeDifferenceForDate';
 import { gql, useMutation } from '@apollo/client';
 import { FEED_QUERY } from "./LinkList";
@@ -24,6 +24,10 @@ function Link(props: LinkProps) {
   const { link } = props;
   const authToken = localStorage.getItem(AUTH_TOKEN);
 
+  const take = LINKS_PER_PAGE;
+  const skip = 0;
+  const orderBy = { createdAt: "desc" };
+
   const [vote] = useMutation(VOTE_MUTATION, {
     variables: {
       linkId: link.id,
@@ -31,6 +35,11 @@ function Link(props: LinkProps) {
     update: (cache, { data: { vote } }) => {
       const { feed }: any = cache.readQuery({
         query: FEED_QUERY,
+        variables: {
+          take,
+          skip,
+          orderBy,
+        },
       });
 
       const updatedLinks = feed.links.map((feedLink: LinkT) => {
@@ -49,6 +58,11 @@ function Link(props: LinkProps) {
           feed: {
             links: updatedLinks,
           },
+        },
+        variables: {
+          take,
+          skip,
+          orderBy,
         },
       });
     },
