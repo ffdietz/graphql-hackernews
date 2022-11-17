@@ -1,20 +1,9 @@
-
-import React from 'react'
 import { Flex, Container, Box, Text, VStack, Wrap, WrapItem, Spacer, HStack } from '@chakra-ui/react';
 import { AUTH_TOKEN } from '../helpers/constants';
 import { timeDifferenceForDate } from '../utils/timeDifferenceForDate';
 import { gql, useMutation } from '@apollo/client';
-
-interface LinkT {
-  id: string;
-  description: string;
-  url: string;
-  votes: number[];
-  postedBy: {
-    name: string;
-  };
-  createAt: Date;
-}
+import { FeedQuery, FEED_QUERY } from "./LinkList";
+import LinkT  from '../types/types'
 
 interface LinkProps {
   link: LinkT;
@@ -25,18 +14,8 @@ const VOTE_MUTATION = gql`
   mutation VoteMutation($linkId: ID!) {
     vote(linkId: $linkId) {
       id
-      link {
-        id
-        votes {
-          id
-          user {
-            id
-          }
-        }
-      }
-      user {
-        id
-      }
+      link{ id votes{ id user{ id }}}
+      user{ id }
     }
   }
 `;
@@ -47,6 +26,30 @@ function Link(props: LinkProps) {
   const [vote] = useMutation(VOTE_MUTATION, {
     variables: {
       linkId: link.id,
+    },
+    update: (cache, { data: { vote } }) => {
+      const { feed }: any = cache.readQuery({
+        query: FEED_QUERY,
+      });
+
+      const updatedLinks = feed?.links.map((feedLink: LinkT) => {
+        if (feedLink.id === link.id) {
+          return {
+            ...feedLink,
+            votes: [...feedLink.votes, vote],
+          };
+        }
+        return feedLink;
+      });
+
+      cache.writeQuery({
+        query: FEED_QUERY,
+        data: {
+          feed: {
+            links: updatedLinks,
+          },
+        },
+      });
     },
   });
 
@@ -59,6 +62,7 @@ function Link(props: LinkProps) {
           </Text>
           {authToken && (
             <Box
+              cursor="pointer"
               color="greenyellow"
               mr="1rem"
               onClick={() => vote()}

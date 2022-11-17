@@ -2,11 +2,7 @@ import { ChangeEvent, FormEvent, useState } from "react";
 import { gql, useMutation } from "@apollo/client";
 import { Button, Container, Flex, Input, VStack } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
-
-interface FormState {
-  description: string;
-  url: string;
-}
+import { FeedQuery, FEED_QUERY } from "./LinkList";
 
 const CREATE_LINK_MUTATION = gql`
   mutation PostMutation($description: String!, $url: String!) {
@@ -19,9 +15,14 @@ const CREATE_LINK_MUTATION = gql`
   }
 `;
 
+interface Form {
+  description: string;
+  url: string;
+}
+
 function CreateLink() {
   const navigate = useNavigate();
-  const [formState, setFormState] = useState<FormState>({
+  const [formState, setFormState] = useState<Form>({
     description: "",
     url: "",
   });
@@ -33,15 +34,30 @@ function CreateLink() {
   We’re now free to call the function whenever we need to when the component renders.
   */
 
-  const [createLink] = useMutation(CREATE_LINK_MUTATION, {
-    variables: {
-      description: formState.description,
-      url: formState.url
-    },
-    onCompleted: () => navigate("/")
-  });
+  const [createLink, { data, loading, error, reset }] = useMutation(
+    CREATE_LINK_MUTATION,
+    {
+      variables: {
+        description: formState.description,
+        url: formState.url,
+      },
+      update: (cache, { data: { post } }) => {
+        const data: any = cache.readQuery({
+          query: FEED_QUERY,
+        });
 
-  console.log(formState);
+        cache.writeQuery({
+          query: FEED_QUERY,
+          data: {
+            feed: {
+              links: [post, ...data.feed.links],
+            },
+          },
+        });
+      },
+      onCompleted: () => navigate("/"),
+    }
+  );
 
   return (
     <Container>
@@ -81,4 +97,4 @@ function CreateLink() {
   );
 }
 
-export default CreateLink
+export default CreateLink;
