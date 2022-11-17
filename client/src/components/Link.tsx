@@ -1,14 +1,9 @@
-import { Flex, Container, Box, Text, Wrap, WrapItem, HStack, VStack } from '@chakra-ui/react';
+import { Flex, Container, Box, Text, HStack, VStack } from '@chakra-ui/react';
 import { AUTH_TOKEN } from '../helpers/constants';
 import { timeDifferenceForDate } from '../utils/timeDifferenceForDate';
 import { gql, useMutation } from '@apollo/client';
 import { FEED_QUERY } from "./LinkList";
 import LinkT  from '../types/types'
-
-interface LinkProps {
-  link: LinkT;
-  index: number;
-}
 
 const VOTE_MUTATION = gql`
   mutation VoteMutation($linkId: ID!) {
@@ -20,9 +15,15 @@ const VOTE_MUTATION = gql`
   }
 `;
 
+interface LinkProps {
+  link: LinkT;
+  index: number;
+}
+
 function Link(props: LinkProps) {
   const { link } = props;
   const authToken = localStorage.getItem(AUTH_TOKEN);
+
   const [vote] = useMutation(VOTE_MUTATION, {
     variables: {
       linkId: link.id,
@@ -63,7 +64,12 @@ function Link(props: LinkProps) {
               cursor="pointer"
               color="greenyellow"
               mr="1rem"
-              onClick={() => vote()}
+              onClick={() => {
+                try{
+                vote()
+                console.log("click")
+                }catch(error) {console.log(error)}
+              }}
             >
               ▲
             </Box>

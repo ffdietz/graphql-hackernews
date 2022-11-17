@@ -26,8 +26,9 @@ function Header() {
       >
         <Link to="/">new</Link>
         <>|</>
+        <Link to="/top">top</Link>
+        <>|</>
         <Link to="/search">search</Link>
-
         <>|</>
         {authToken && <Link to="/create">submit</Link>}
       </Flex>
