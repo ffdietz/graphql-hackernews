@@ -1,8 +1,8 @@
-import { Flex, Container, Box, Text, VStack, Wrap, WrapItem, Spacer, HStack } from '@chakra-ui/react';
+import { Flex, Container, Box, Text, Wrap, WrapItem, HStack, VStack } from '@chakra-ui/react';
 import { AUTH_TOKEN } from '../helpers/constants';
 import { timeDifferenceForDate } from '../utils/timeDifferenceForDate';
 import { gql, useMutation } from '@apollo/client';
-import { FeedQuery, FEED_QUERY } from "./LinkList";
+import { FEED_QUERY } from "./LinkList";
 import LinkT  from '../types/types'
 
 interface LinkProps {
@@ -32,7 +32,7 @@ function Link(props: LinkProps) {
         query: FEED_QUERY,
       });
 
-      const updatedLinks = feed?.links.map((feedLink: LinkT) => {
+      const updatedLinks = feed.links.map((feedLink: LinkT) => {
         if (feedLink.id === link.id) {
           return {
             ...feedLink,
@@ -54,12 +54,10 @@ function Link(props: LinkProps) {
   });
 
   return (
-    <Container m="1rem" w="80vw" bg="cadetblue" p="1rem 5rem" centerContent>
-      <Flex w="60vw">
+    <Container fontSize="large" centerContent>
+      <Flex w="65vw" m="0.5rem" bg="cadetblue" p="0.5rem 2rem">
         <HStack mr="1rem">
-          <Text as="span">
-            {props.index + 1}.
-          </Text>
+          <Text as="span">{props.index + 1}.</Text>
           {authToken && (
             <Box
               cursor="pointer"
@@ -71,23 +69,23 @@ function Link(props: LinkProps) {
             </Box>
           )}
         </HStack>
-        <Wrap>
-          <WrapItem>
-            <Text as="span" mr="0.7rem">
+        <VStack>
+          <Container>
+            <Text as="span" mr="1rem" fontSize="large">
               {link.description}
             </Text>
-            <Text as="span" color="dimgrey">
+            <Text as="span" color="black" fontSize="small" p={0} m={0}>
               ({link.url})
             </Text>
-          </WrapItem>
-          <WrapItem>
-            <Text as="span" lineHeight="0.9rem" fontSize="small">
-              {link.votes?.length} votes | by{" "}
+          </Container>
+          <Container>
+            <Text as="span" fontSize="small" p={0} m={0}>
+              {link.votes.length} votes | by{" "}
               {link.postedBy ? link.postedBy.name : "Unknown"}
               {timeDifferenceForDate(link.createAt)}
             </Text>
-          </WrapItem>
-        </Wrap>
+          </Container>
+        </VStack>
       </Flex>
     </Container>
   );

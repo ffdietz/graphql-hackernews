@@ -27,13 +27,12 @@ export const FEED_QUERY = gql`
   }
 `;
 
-export interface Feed {
-  id: string;
-  links: LinkT[];
-}
 
 export interface FeedQuery {
-  feed: Feed;
+  feed:{
+    id: string;
+    links: LinkT[];
+  }
 }
 
 function LinkList() {

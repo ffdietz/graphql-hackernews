@@ -34,7 +34,7 @@ function CreateLink() {
   We’re now free to call the function whenever we need to when the component renders.
   */
 
-  const [createLink, { data, loading, error, reset }] = useMutation(
+  const [createLink] = useMutation(
     CREATE_LINK_MUTATION,
     {
       variables: {
@@ -57,14 +57,16 @@ function CreateLink() {
       },
       onCompleted: () => navigate("/"),
     }
-  );
+    );
 
   return (
     <Container>
       <form
         onSubmit={(e: FormEvent<HTMLFormElement>) => {
           e.preventDefault();
-          createLink();
+          try{
+            createLink();
+          } catch(error) { console.log(error) }
         }}
       >
         <VStack>
