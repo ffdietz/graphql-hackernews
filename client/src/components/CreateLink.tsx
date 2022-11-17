@@ -16,8 +16,8 @@ const CREATE_LINK_MUTATION = gql`
 `;
 
 interface Form {
-  description: string;
-  url: string;
+  description: string
+  url: string
 }
 
 function CreateLink() {

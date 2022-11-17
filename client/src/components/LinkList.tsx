@@ -3,6 +3,27 @@ import Link from "./Link";
 import { useQuery, gql, QueryResult } from "@apollo/client";
 import LinkT from "../types/types";
 
+const NEW_LINKS_SUBSCRIPTION = gql`
+  subscription {
+    newLink {
+      id
+      url
+      description
+      createdAt
+      postedBy {
+        id
+        name
+      }
+      votes {
+        id
+        user {
+          id
+        }
+      }
+    }
+  }
+`;
+
 export const FEED_QUERY = gql`
   {
     feed {
@@ -30,15 +51,35 @@ export const FEED_QUERY = gql`
 
 export interface FeedQuery {
   feed:{
-    id: string;
-    links: LinkT[];
+    __typename: string;
+    id: string
+    links: LinkT[]
   }
 }
 
 function LinkList() {
-  const { data, loading } = useQuery<FeedQuery>(FEED_QUERY);
+  const { data, loading, error, subscribeToMore } = useQuery<FeedQuery>(FEED_QUERY);
 
-  const linksToRender: LinkT[] | undefined = data?.feed.links;
+  subscribeToMore({
+    document: NEW_LINKS_SUBSCRIPTION,
+    updateQuery: (prev, { subscriptionData}: any) => {
+      if (!subscriptionData.data) return prev;
+      const newLink = subscriptionData.data.newLink;
+      const exists = prev.feed.links.find(({ id }) => id === newLink.id);
+      if (exists) return prev;
+
+      return Object.assign({}, prev, {
+        feed: {
+          links: [newLink, ...prev.feed.links],
+          count: prev.feed.links.length + 1,
+          __typename: prev.feed.__typename,
+        },
+      });
+    },
+  });
+
+  const linksToRender = data?.feed.links;
+
 
   return (
     <Container>
