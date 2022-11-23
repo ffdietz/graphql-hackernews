@@ -12,13 +12,13 @@ const root = ReactDOM.createRoot(container);
 
 root.render(
   <React.StrictMode>
-    <BrowserRouter>
-      <ChakraProvider theme={theme}>
-        <ApolloProvider client={client}>
-          <App />
-        </ApolloProvider>
-      </ChakraProvider>
-    </BrowserRouter>
+    <ApolloProvider client={client}>
+      <BrowserRouter>
+        <ChakraProvider theme={theme}>
+            <App />
+        </ChakraProvider>
+      </BrowserRouter>
+    </ApolloProvider>
   </React.StrictMode>
 );
 

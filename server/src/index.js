@@ -66,3 +66,5 @@ server
   .then(({ url }) =>
     console.log(`Server is running on ${url}`)
   );
+
+  // npx prisma studio

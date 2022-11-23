@@ -1,10 +1,9 @@
-import { Box, Container, Flex, Text } from "@chakra-ui/react";
-import Link from "./Link";
-import { useQuery, gql, QueryResult } from "@apollo/client";
-import LinkT from "../types/types";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useQuery, gql } from "@apollo/client";
+import { Box, Container, Flex, Text } from "@chakra-ui/react";
 import { LINKS_PER_PAGE } from "../helpers/constants";
-import { stringify } from "querystring";
+import LinkT from "../types/types";
+import Link from "./Link";
 
 export interface FeedQuery {
   feed: {
@@ -73,13 +72,13 @@ export const FEED_QUERY = gql`
         url
         description
         postedBy {
-          id
           name
         }
         votes {
           id
           user {
             id
+            name
           }
         }
       }
@@ -112,33 +111,12 @@ function LinkList() {
   const page = parseInt(pageIndexParams[pageIndexParams.length - 1]);
   const pageIndex = page ? (page - 1) * LINKS_PER_PAGE : 0;
 
-  const { data, loading, error, subscribeToMore } = useQuery<FeedQuery>(FEED_QUERY,{
-    variables: getQueryVariables(isNewPage, page),
-  });
-
-  subscribeToMore({
-    document: NEW_LINKS_SUBSCRIPTION,
-    updateQuery: (prev, { subscriptionData}: any) => {
-      if (!subscriptionData.data) return prev;
-      const newLink = subscriptionData.data.newLink;
-      const exists = prev.feed.links.find(({ id }) => id === newLink.id);
-      if (exists) return prev;
-
-      return Object.assign({}, prev, {
-        feed: {
-          links: [newLink, ...prev.feed.links],
-          count: prev.feed.links.length + 1,
-          __typename: prev.feed.__typename,
-        },
-      });
-    },
-  });
-
-  subscribeToMore({
-    document: NEW_VOTES_SUBSCRIPTION,
-  });
-
-  const linksToRender = data?.feed.links;
+  const { data, loading, error } = useQuery<FeedQuery>(
+    FEED_QUERY,
+    {
+      variables: getQueryVariables(isNewPage, page),
+    }
+  );
 
   return (
     <Container>

@@ -47,14 +47,14 @@ type Link {
   description: String!
   url: String!
   postedBy: User
-  votes: [Vote!]!
+  votes: [Vote]
   createdAt: DateTime!
 }
 
 type Vote {
-  id: ID!
-  link: Link!
-  user: User!
+  id: ID
+  link: Link
+  user: User
 }
 
 input LinkOrderByInput {

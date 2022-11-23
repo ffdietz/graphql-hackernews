@@ -1,5 +1,5 @@
 export default interface LinkT {
-  id: string;
+  id: string | number;
   description: string;
   url: string;
   votes: number[];

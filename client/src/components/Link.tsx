@@ -1,7 +1,7 @@
 import { Flex, Container, Box, Text, HStack, VStack } from '@chakra-ui/react';
 import { AUTH_TOKEN, LINKS_PER_PAGE } from '../helpers/constants';
 import { timeDifferenceForDate } from '../utils/timeDifferenceForDate';
-import { gql, useMutation } from '@apollo/client';
+import { gql, ObservableQuery, OperationVariables, useMutation } from '@apollo/client';
 import { FEED_QUERY } from "./LinkList";
 import LinkT  from '../types/types'
 
@@ -9,8 +9,18 @@ const VOTE_MUTATION = gql`
   mutation VoteMutation($linkId: ID!) {
     vote(linkId: $linkId) {
       id
-      link{ id votes{ id user{ id }}}
-      user{ id }
+      link{ 
+        id 
+        votes { 
+          id 
+          user {
+            id 
+          }
+        }
+      }
+      user { 
+        id
+      }
     }
   }
 `;
@@ -27,46 +37,12 @@ function Link(props: LinkProps) {
   const take = LINKS_PER_PAGE;
   const skip = 0;
   const orderBy = { createdAt: "desc" };
-
-  const [vote] = useMutation(VOTE_MUTATION, {
-    variables: {
-      linkId: link.id,
-    },
-    update: (cache, { data: { vote } }) => {
-      const { feed }: any = cache.readQuery({
-        query: FEED_QUERY,
-        variables: {
-          take,
-          skip,
-          orderBy,
-        },
-      });
-
-      const updatedLinks = feed.links.map((feedLink: LinkT) => {
-        if (feedLink.id === link.id) {
-          return {
-            ...feedLink,
-            votes: [...feedLink.votes, vote],
-          };
-        }
-        return feedLink;
-      });
-
-      cache.writeQuery({
-        query: FEED_QUERY,
-        data: {
-          feed: {
-            links: updatedLinks,
-          },
-        },
-        variables: {
-          take,
-          skip,
-          orderBy,
-        },
-      });
-    },
+  const [vote, {data, error}] = useMutation(VOTE_MUTATION, {
+    variables: { linkId: link.id },
+    refetchQueries: [{ query: FEED_QUERY }],
   });
+
+  console.log(link.votes.length);
 
   return (
     <Container fontSize="large" centerContent>
@@ -79,10 +55,7 @@ function Link(props: LinkProps) {
               color="greenyellow"
               mr="1rem"
               onClick={() => {
-                try{
-                vote()
-                console.log("click")
-                }catch(error) {console.log(error)}
+                vote();
               }}
             >
               ▲
@@ -100,8 +73,10 @@ function Link(props: LinkProps) {
           </Container>
           <Container>
             <Text as="span" fontSize="small" p={0} m={0}>
-              {link.votes.length} votes | by{" "}
+              {link.votes?.length}
+              {" votes  |  by "}
               {link.postedBy ? link.postedBy.name : "Unknown"}
+              {" | "}
               {timeDifferenceForDate(link.createAt)}
             </Text>
           </Container>
@@ -112,3 +87,7 @@ function Link(props: LinkProps) {
 }
 
 export default Link
+
+function shouldRefetchQuery(observableQuery: ObservableQuery<any, OperationVariables>) {
+  throw new Error('Function not implemented.');
+}

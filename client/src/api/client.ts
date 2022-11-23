@@ -1,14 +1,13 @@
 import {
+  split,
   ApolloClient,
   createHttpLink,
   InMemoryCache,
 } from "@apollo/client";
-import { split } from "@apollo/client";
 import { WebSocketLink } from "@apollo/client/link/ws";
 import { getMainDefinition } from "@apollo/client/utilities";
 import { setContext } from "@apollo/client/link/context";
 import { AUTH_TOKEN } from "../helpers/constants";
-import { OperationDefinitionNode } from "graphql/language/ast";
 
 
 const httpLink = createHttpLink({
@@ -50,7 +49,7 @@ const link = split(
 
 const client = new ApolloClient({
   link,
-  cache: new InMemoryCache(),
+  cache: new InMemoryCache()
 });
 
 export default client;
